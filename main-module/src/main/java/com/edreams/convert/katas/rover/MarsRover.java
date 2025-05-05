@@ -39,49 +39,34 @@ public class MarsRover {
     private void move() {
         int positionX = Integer.parseInt(position.split(",")[0]);
         int positionY = Integer.parseInt(position.split(",")[1]);
-        switch (compassDirection) {
-            case "N":
-                if (positionY + 1 >= this.plateau[0].length) {
-                    compassDirection = turnAround(compassDirection);
-                    System.out.println("Rover turned around to face " + compassDirection);
-                } else {
-                    positionY++;
-                    this.plateau[positionX][positionY] = "";
-                    this.position = positionX + "," + positionY;
-                }
-                break;
-            case "E":
-                if (positionX + 1 >= this.plateau.length) {
-                    compassDirection = turnAround(compassDirection);
-                    System.out.println("Rover turned around to face " + compassDirection);
-                } else {
-                    positionX++;
-                    this.plateau[positionX][positionY] = "";
-                    this.position = positionX + "," + positionY;
-                }
-                break;
-            case "S":
-                if (positionY - 1 < 0) {
-                    compassDirection = turnAround(compassDirection);
-                    System.out.println("Rover turned around to face " + compassDirection);
-                } else {
-                    positionY--;
-                    this.plateau[positionX][positionY] = "";
-                    this.position = positionX + "," + positionY;
-                }
-                break;
-            case "W":
-                if (positionX - 1 < 0) {
-                    compassDirection = turnAround(compassDirection);
-                    System.out.println("Rover turned around to face " + compassDirection);
-                } else {
-                    positionX--;
-                    this.plateau[positionX][positionY] = "";
-                    this.position = positionX + "," + positionY;
-                }
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid compass direction: " + compassDirection);
+
+        switch (this.compassDirection) {
+            case "N" -> positionY = updatePosition(positionX, positionY + 1, "Y");
+            case "E" -> positionX = updatePosition(positionX + 1, positionY, "X");
+            case "S" -> positionY = updatePosition(positionX, positionY - 1, "Y");
+            case "W" -> positionX = updatePosition(positionX - 1, positionY, "X");
+            default -> throw new IllegalArgumentException("Invalid compass direction: " + this.compassDirection);
+        }
+
+        this.position = positionX + "," + positionY;
+        this.plateau[positionX][positionY] = "";
+    }
+
+    private int updatePosition(int newX, int newY, String axis) {
+        if ("X".equals(axis)) {
+            if (newX < 0 || newX >= this.plateau.length) {
+                this.compassDirection = turnAround(this.compassDirection);
+                System.out.println("Rover turned around to face " + this.compassDirection);
+                return Integer.parseInt(position.split(",")[0]);
+            }
+            return newX;
+        } else {
+            if (newY < 0 || newY >= this.plateau[0].length) {
+                this.compassDirection = turnAround(this.compassDirection);
+                System.out.println("Rover turned around to face " + this.compassDirection);
+                return Integer.parseInt(position.split(",")[1]);
+            }
+            return newY;
         }
     }
 
