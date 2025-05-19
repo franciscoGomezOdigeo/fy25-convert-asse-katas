@@ -1,40 +1,37 @@
 package com.edreams.convert.katas.rover;
 
+import com.edreams.convert.katas.rover.controllers.PlanetController;
+import com.edreams.convert.katas.rover.controllers.RoverController;
 import com.edreams.convert.katas.rover.models.Direction;
 import com.edreams.convert.katas.rover.models.Planet;
-import com.edreams.convert.katas.rover.models.Plateau;
 import com.edreams.convert.katas.rover.models.Position;
 
-import java.util.HashMap;
 import java.util.Scanner;
 
 public class Main {
-    static HashMap<String, Planet> planetMap;
-    static {
-        planetMap = new HashMap<>();
-        planetMap.put("Mars", new Planet("Mars", new Plateau(10, 10)));
-        planetMap.put("Venus", new Planet("Venus", new Plateau(15, 15)));
-        planetMap.put("Mercury", new Planet("Mercury", new Plateau(5, 5)));
-        planetMap.put("Jupiter", new Planet("Jupiter", new Plateau(200, 200)));
-    }
 
     public static void main(String[] args) {
+        RoverController roverController = new RoverController();
+        PlanetController planetController = new PlanetController();
         Scanner scanner = new Scanner(System.in);
         System.out.println("Welcome to the Mars Rover CLI!");
+        // -- START Planet Selection PARAMS name --
         System.out.println("Type the planet's name (e.g., Mars, Venus, Mercury, Jupiter) to select a planet:");
-        for (String planetName : planetMap.keySet()) {
+        for (String planetName : planetController.getAvailablePlanets()) {
             System.out.println("- " + planetName);
         }
         System.out.print("Enter planet name: ");
         String planetName = scanner.nextLine().trim();
-        Planet selectedPlanet = planetMap.get(planetName);
+        Planet selectedPlanet = planetController.getPlanet(planetName);
         if (selectedPlanet == null) {
             System.out.println("Invalid planet name. Exiting the program.");
             return;
         }
         System.out.println("You selected: " + selectedPlanet.getName() + " Plateau of size " + selectedPlanet.getPlateau().getWidth() + "x" + selectedPlanet.getPlateau().getHeight());
+        // -- END Planet Selection RETURN Planet --
 
         System.out.println("Type the deployment position (e.g., 0 0 N) to deploy the rover (default position 0 0 N):");
+        // -- START Initial Deployment PARAMS x y Direction --
         String position = scanner.nextLine().trim();
         String[] positionParts = position.split(" ");
         Position startingPosition = new Position(0, 0, Direction.NORTH);
@@ -52,12 +49,16 @@ public class Main {
                 System.out.println("Invalid position format. Using default position 0 0 N.");
             }
         }
+        // -- END Initial Deployment RETURN Position --
 
-        MarsRover marsRover = new MarsRover(startingPosition, selectedPlanet.getPlateau());
+        // -- START Rover Deployment PARAMS Position, Plateau --
+        roverController.initializeMarsRover(startingPosition, selectedPlanet.getPlateau());
         System.out.println("Rover deployed at: " + startingPosition);
+        // -- END Rover Deployment RETURN MarsRover --
 
         System.out.println("Type your commands or type 'exit' to quit.");
 
+        // -- START Main CLI command cycle --
         while (true) {
             System.out.print("Enter command: ");
             String input = scanner.nextLine().trim();
@@ -68,10 +69,12 @@ public class Main {
             }
 
             System.out.println("You entered: " + input);
-            String output = marsRover.execute(input);
+            String output = roverController.sendCommand(input);
             System.out.println(output);
         }
+        // -- END --
 
         scanner.close();
     }
+
 }

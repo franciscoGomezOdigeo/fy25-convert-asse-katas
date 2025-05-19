@@ -16,7 +16,7 @@ public class MarsRover {
 
     //TODO: Optional execute command
 
-    public String execute(String command) {
+    public String execute(String command) throws IllegalArgumentException {
         validateCommands(command);
         String[] commands = command.split("");
         int commandMultiplier = 1;
@@ -48,7 +48,7 @@ public class MarsRover {
         return this.currentPosition.toString();
     }
 
-    private void validateCommands(String commands) {
+    private void validateCommands(String commands) throws IllegalArgumentException {
         if (commands == null || commands.isEmpty()) {
             throw new IllegalArgumentException("Commands cannot be null or empty");
         }
@@ -93,7 +93,7 @@ public class MarsRover {
         }
     }
 
-    private void turn(String direction) {
+    private void turn(String direction) throws IllegalArgumentException {
         switch (direction) {
             case "L":
                 this.currentPosition.turnLeft();
